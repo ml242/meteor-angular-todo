@@ -1,23 +1,29 @@
+$scope.tasks = $meteor.collection(function() {
+  return Tasks.find({}, { sort: { createdAt: -1 } })
+});
+
 if (Meteor.isClient) {
-  // counter starts at 0
-  Session.setDefault('counter', 0);
 
-  Template.hello.helpers({
-    counter: function () {
-      return Session.get('counter');
-    }
-  });
+    // This code only runs on the client
+    angular.module("simple-todos",['angular-meteor']);
 
-  Template.hello.events({
-    'click button': function () {
-      // increment the counter when button is clicked
-      Session.set('counter', Session.get('counter') + 1);
-    }
-  });
-}
+    angular.module("simple-todos").controller("TodosListCtrl", ['$scope', '$meteor',
+      function($scope, $meteor){
 
-if (Meteor.isServer) {
-  Meteor.startup(function () {
-    // code to run on server at startup
-  });
+       $scope.tasks = $meteor.collection(function() {
+  return Tasks.find({}, { sort: { createdAt: -1 } })
+});
+
+        // Inside the if (Meteor.isClient) block, right after the definition of $scope.tasks:
+        $scope.addTask = function(newTask) {
+          $scope.tasks.push( {
+            text: newTask,
+            createdAt: new Date() }
+          );
+        };
+
+    }]);
+    
+    
+    
 }
